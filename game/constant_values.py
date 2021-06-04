@@ -3,12 +3,12 @@ import pygame
 #stałe do rysowania planszy
 WIN_WIDTH, WIN_HEIGHT = 700, 800
 WIDTH, HEIGHT = 600, 600
-BORDER_SIZE = 20
+BORDER_SIZE = 25
 
 #plansze dotyczące pól i pionków
 ROWS, COLUMNS = 8, 8
 SQUARE_SIZE = int(HEIGHT/ROWS)
-PAWN_SQUARE_RATIO = 0.6
+PAWN_SQUARE_RATIO = 0.5
 PAWN_RADIUS = 2
 
 #kolory
@@ -20,4 +20,6 @@ BOARD_DARK = (112, 68, 53)
 BOARD_MEDIUM = (161, 105, 86)
 BOARD_BLACK = (36, 17, 11)
 
-
+#tekst
+pygame.font.init()
+SMALLFONT = pygame.font.Font('assets/Lato/Lato-Bold.ttf', 18)
