@@ -1,6 +1,6 @@
 import pygame
 from .constant_values import *
-from .pawn import Pawn
+from .pawn import JustPawn, KingPawn
 
 class Board:
     def __init__(self):
@@ -30,7 +30,6 @@ class Board:
             x = (WIN_WIDTH - WIDTH) / 2
             y = (WIN_HEIGHT - HEIGHT) / 2
             window.blit(text, (x - BORDER_SIZE * 0.7, y + SQUARE_SIZE * i + SQUARE_SIZE * 0.3))
-
             #litery
             text = SMALLFONT.render(letters[i], True, BOARD_DARK)
             y += HEIGHT
@@ -46,9 +45,9 @@ class Board:
                 #"czarne" kwadraty (te, na których mogą znaleźć się pionki)
                 if row % 2 == ((column + 1) % 2):
                     if row in (0, 1, 2):
-                        self.board[row].append(Pawn(row, column, BLACK))
+                        self.board[row].append(JustPawn(row, column, BLACK))
                     elif row in (5, 6, 7):
-                        self.board[row].append(Pawn(row, column, WHITE))
+                        self.board[row].append(JustPawn(row, column, WHITE))
                     else:
                         self.board[row].append(0)
                 else:

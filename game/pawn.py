@@ -1,6 +1,7 @@
 import pygame
 from pygame import gfxdraw
-from .constant_values import BLACK, WHITE, SQUARE_SIZE, WIN_WIDTH, WIN_HEIGHT, WIDTH, HEIGHT, PAWN_SQUARE_RATIO, PAWN_RADIUS
+from .constant_values import BLACK, WHITE, SQUARE_SIZE, WIN_WIDTH, WIN_HEIGHT, WIDTH, HEIGHT, PAWN_SQUARE_RATIO, \
+    PAWN_OUTLINE, SCALED_CROWN
 
 #metoda do rysowania wypełnionych okręgów po antialiasingu
 def drawAACircle(surface, color, coords, radius):
@@ -31,11 +32,37 @@ class Pawn:
         self.y = (WIN_HEIGHT - HEIGHT) / 2 + SQUARE_SIZE / 2 + self.row * SQUARE_SIZE
 
     def draw(self, windows):
+        pass
+
+
+# zwykły pionek
+class JustPawn(Pawn):
+    def __init__(self, row, column, color):
+        super().__init__(row, column, color)
+
+    def draw(self, window):
         radius = int(SQUARE_SIZE * PAWN_SQUARE_RATIO / 2)
-        #outline
-        if PAWN_RADIUS == 0:
+        # obrys
+        if PAWN_OUTLINE == 0:
             pass
         else:
-            drawAACircle(windows, self.invColor, (self.x, self.y), radius + PAWN_RADIUS)
-        #pawn
-        drawAACircle(windows, self.color, (self.x, self.y), radius)
+            drawAACircle(window, self.invColor, (self.x, self.y), radius + PAWN_OUTLINE)
+        # pionek
+        drawAACircle(window, self.color, (self.x, self.y), radius)
+
+# "damka"
+class KingPawn(Pawn):
+    def __init__(self, row, column, color):
+        super().__init__(row, column, color)
+
+    def draw(self, window):
+        radius = int(SQUARE_SIZE * PAWN_SQUARE_RATIO / 2)
+        # obrys
+        if PAWN_OUTLINE == 0:
+            pass
+        else:
+            drawAACircle(window, self.invColor, (self.x, self.y), radius + PAWN_OUTLINE)
+        # pionek
+        drawAACircle(window, self.color, (self.x, self.y), radius)
+        window.blit(SCALED_CROWN, (self.x - SCALED_CROWN.get_width()/2, self.y - SCALED_CROWN.get_height()/2))
+
