@@ -38,9 +38,9 @@ class Game:
         if self.selected and pawn == 0 and (row, column) in self.validMoves:
             self.board.movePawn(self.selected, (row, column))
 
-            skippedSquare = self.validMoves[(row, column)]
-            if skippedSquare:
-                self.board.remove(skippedSquare)
+            skippedSquares = self.validMoves[(row, column)]
+            if skippedSquares:
+                self.remove(skippedSquares)
 
             self.changeTurn()
 

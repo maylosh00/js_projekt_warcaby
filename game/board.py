@@ -5,8 +5,9 @@ from .pawn import JustPawn, KingPawn, Pawn
 
 class Board:
     def __init__(self):
-        # wirtualna plansza - przechowuje aktualna gre w postaci [[0, Pawn, 0, Pawn, ...], [...], ...]
+        # wirtualna plansza - przechowuje aktualny stan gry w postaci [[0, Pawn, 0, Pawn, ...], [...], ...]
         self._board = [[]]
+        # TODO - te wartości nie mogą być hard-coded, trzeba by je obliczyć albo matematycznie albo w pętli po _board
         self._blackPawnsLeft = self._whitePawnsLeft = 12
         self._blackKings = self._whiteKings = 0
         self.setUpBoard()
@@ -105,7 +106,7 @@ class Board:
 
     # metody odpowiedzialne za znalezienie możliwych ruchów dla wybranego pionka
     # sprawdzanie lewej przekątnej od wybranego pionka, prawa działa analogicznie
-    def _checkLeftDiagonal(self, start, end, direction, color, column, skippedPawns=[]) -> {(int, int): [(int, int)]}:
+    def _checkLeftDiagonal(self, start, end, direction, color, column, skippedPawns=[]):
         # słownik przechowujący dostępne ruchy w postaci: (3,0) = [<Pawn>, <Pawn>, ...], gdzie kluczami są dostępne
         # pola, na które możemy się ruszyć, natomiast wartościami jest lista pól przez które "przeskoczyliśmy" (zbite
         # pionki)
@@ -139,16 +140,16 @@ class Board:
                     else:
                         newEnd = min(row + 3, ROWS)
                     moves.update(self._checkLeftDiagonal(row + direction, newEnd, direction, color, column - 1,
-                                                         skipped = previousSquare))
+                                                         skippedPawns = previousSquare))
                     moves.update(self._checkRightDiagonal(row + direction, newEnd, direction, color, column + 1,
-                                                          skipped = previousSquare))
+                                                          skippedPawns = previousSquare))
                 # wychodzę z pętli aby uniknąć dodawania dodatkowych ruchów po uznaniu ruchu na pierwsze puste pole
                 # bez bicia za możliwy (w przeciwnym wypadku, pionki mogłyby się poruszać na 2 pola do przodu,
                 # jeśli oba są wolne)
                 break
             # jeżeli pole jest pionkiem tego samego koloru, nie mogę się tu ruszyć
             elif isinstance(currentSquare, Pawn):
-                if currentSquare.getColor():
+                if currentSquare.getColor() == color:
                     break
                 # jeżeli nie jest, ustawiam obecne pole jako poprzednie i przechodzę do następnej iteracji
                 else:
@@ -178,13 +179,13 @@ class Board:
                     else:
                         newEnd = min(row + 3, ROWS)
                     moves.update(self._checkLeftDiagonal(row + direction, newEnd, direction, color, column - 1,
-                                                         skipped=previousSquare))
+                                                         skippedPawns=previousSquare))
                     moves.update(self._checkRightDiagonal(row + direction, newEnd, direction, color, column + 1,
-                                                          skipped=previousSquare))
+                                                          skippedPawns=previousSquare))
                 break
 
             elif isinstance(currentSquare, Pawn):
-                if currentSquare.getColor():
+                if currentSquare.getColor() == color:
                     break
                 else:
                     previousSquare = [currentSquare]
