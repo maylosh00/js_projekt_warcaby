@@ -1,6 +1,7 @@
 import pygame
 from game.constant_values import WIN_WIDTH, WIN_HEIGHT, WIDTH, HEIGHT, SQUARE_SIZE, ROWS, COLUMNS
 from game.board import Board
+from game.game import Game
 
 window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 pygame.display.set_caption('Warcaby')
@@ -13,13 +14,12 @@ def getRowColumnCoordsFromMousePos(mousePos):
     # (-1, 2) lub (8, 1)
     column = (x - (WIN_WIDTH - WIDTH)/2) // SQUARE_SIZE
     row = (y - (WIN_HEIGHT - HEIGHT)/2) // SQUARE_SIZE
-    # TODO - z jakiegos powodu return row, column zwraca floaty, zrób research
     return int(row), int(column)
 
 def main():
     run = True
     clock = pygame.time.Clock()
-    board = Board()
+    game = Game(window)
 
 
     while run:
@@ -42,8 +42,7 @@ def main():
                     print(f'Coords: {row} {column}')
 
 
-        board.drawGame(window)
-        pygame.display.update()
+        game.update()
 
 
     pygame.quit()

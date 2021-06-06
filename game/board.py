@@ -6,27 +6,26 @@ from .pawn import JustPawn, KingPawn, Pawn
 class Board:
     def __init__(self):
         # wirtualna plansza - przechowuje aktualna gre w postaci [[0, Pawn, 0, Pawn, ...], [...], ...]
-        self.board = [[]]
-        self.selectedPawn = None
-        self.blackPawnsLeft = self.whitePawnsLeft = 12
-        self.blackKings = self.whiteKings = 0
+        self._board = [[]]
+        self._blackPawnsLeft = self._whitePawnsLeft = 12
+        self._blackKings = self._whiteKings = 0
         self.setUpBoard()
 
     def setUpBoard(self):
         for row in range(ROWS):
             #tworze plansze 8 wierszy
-            self.board.append([])
+            self._board.append([])
             for column in range(COLUMNS):
                 #"czarne" kwadraty (te, na których mogą znaleźć się pionki)
                 if row % 2 == ((column + 1) % 2):
                     if row in (0, 1, 2):
-                        self.board[row].append(JustPawn(row, column, BLACK))
+                        self._board[row].append(JustPawn(row, column, BLACK))
                     elif row in (5, 6, 7):
-                        self.board[row].append(JustPawn(row, column, WHITE))
+                        self._board[row].append(JustPawn(row, column, WHITE))
                     else:
-                        self.board[row].append(0)
+                        self._board[row].append(0)
                 else:
-                    self.board[row].append(0)
+                    self._board[row].append(0)
 
     def drawBoard(self, window):
         #rysowanie "stołu" wraz z planszą
@@ -56,25 +55,26 @@ class Board:
         self.drawBoard(window)
         for row in range(ROWS):
             for column in range(COLUMNS):
-                pawn = self.board[row][column]
+                pawn = self._board[row][column]
                 if pawn != 0:
                     pawn.draw(window)
 
     def getPawnFromCoords(self, row, column) -> Pawn:
-        return self.board[row][column]
+        return self._board[row][column]
 
     def movePawn(self, pawn, coords):
         row, column = coords
         # Obsługa wirtualnej planszy - zamiana miejscami obiektu pionka z zerem, znajdującym sie do tej pory w
         # miejscu, na które ruszamy piona
-        self.board[pawn.row][pawn.column], self.board[row][column] = self.board[row][column], self.board[pawn.row][pawn.column]
+        self._board[pawn.getRow()][pawn.getColumn()], self._board[row][column] = self._board[row][column], self._board[pawn.getRow()][pawn.getColumn()]
         pawn.move(row, column)
 
         # Obsługa zamiany pionka w damkę, gdy dotrzemy do końca planszy. Ponieważ zamiana dzieje się podczas ruszenia
         # pionka (a ten nie może się cofać), nie musze uwzględniać warunków dotyczących kolorów pionków
+        # TODO - Jednak trzeba uwzglednic warunki z kolorami, w klasycznych warcabach mozna bic do tylu
         if row == 0 or row == ROWS:
-            self.board[row][column] = KingPawn(row, column, pawn.color)
-            if pawn.color == WHITE:
-                self.whiteKings += 1
+            self._board[row][column] = KingPawn(row, column, pawn.getColor())
+            if pawn.getColor() == WHITE:
+                self._whiteKings += 1
             else:
-                self.blackKings += 1
+                self._blackKings += 1

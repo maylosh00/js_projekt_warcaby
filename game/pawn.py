@@ -3,27 +3,25 @@ from pygame import gfxdraw
 from .constant_values import BLACK, WHITE, SQUARE_SIZE, WIN_WIDTH, WIN_HEIGHT, WIDTH, HEIGHT, PAWN_SQUARE_RATIO, \
     PAWN_OUTLINE, SCALED_CROWN
 
-#metoda do rysowania wypełnionych okręgów po antialiasingu
+# metoda do rysowania wypełnionych okręgów po antialiasingu
 def drawAACircle(surface, color, coords, radius):
     x, y = coords
     gfxdraw.aacircle(surface, int(x), int(y), int(radius), color)
     gfxdraw.filled_circle(surface, int(x), int(y), int(radius), color)
 
 class Pawn:
-    #TODO: prywatne atrybuty + gettery? czy lepiej zostawić tak?
-
     def __init__(self, row, column, color):
         #TODO wyjątek, gdy podamy zły row, column
-        self.row = row
-        self.column = column
-        self.color = color
+        self._row = row
+        self._column = column
+        self._color = color
 
-        if self.color == WHITE:
-            self.invColor = BLACK
-            self.dir = 1
-        elif self.color == BLACK:
-            self.invColor = WHITE
-            self.dir = -1
+        if self._color == WHITE:
+            self._invColor = BLACK
+            self._dir = 1
+        elif self._color == BLACK:
+            self._invColor = WHITE
+            self._dir = -1
         #TODO wyjątek, gdy wpiszemy zły kolor
 
         self.x = 0
@@ -31,15 +29,36 @@ class Pawn:
         self.calculateXY()
 
     def calculateXY(self):
-        self.x = (WIN_WIDTH - WIDTH) / 2 + SQUARE_SIZE / 2 + self.column * SQUARE_SIZE
-        self.y = (WIN_HEIGHT - HEIGHT) / 2 + SQUARE_SIZE / 2 + self.row * SQUARE_SIZE
+        self.x = (WIN_WIDTH - WIDTH) / 2 + SQUARE_SIZE / 2 + self._column * SQUARE_SIZE
+        self.y = (WIN_HEIGHT - HEIGHT) / 2 + SQUARE_SIZE / 2 + self._row * SQUARE_SIZE
 
-    def draw(self, windows):
+    # ettery
+    def getRow(self):
+        return self._row
+    def getColumn(self):
+        return self._column
+    def getColor(self):
+        return self._color
+    def getDir(self):
+        return self._dir
+
+    # prywatna metoda wydzielona z powodu duplikowania kodu
+    def _drawPawnBase(self, window):
+        radius = int(SQUARE_SIZE * PAWN_SQUARE_RATIO / 2)
+        # obrys
+        if PAWN_OUTLINE == 0:
+            pass
+        else:
+            drawAACircle(window, self._invColor, (self.x, self.y), radius + PAWN_OUTLINE)
+        # pionek
+        drawAACircle(window, self._color, (self.x, self.y), radius)
+
+    def draw(self, window):
         pass
 
     def move(self, newRow, newColumn):
-        self.row = newRow
-        self.column = newColumn
+        self._row = newRow
+        self._column = newColumn
         #todo - wyjatek, gdy podamy zle wartosci row, column
         self.calculateXY()
 
@@ -50,14 +69,7 @@ class JustPawn(Pawn):
         super().__init__(row, column, color)
 
     def draw(self, window):
-        radius = int(SQUARE_SIZE * PAWN_SQUARE_RATIO / 2)
-        # obrys
-        if PAWN_OUTLINE == 0:
-            pass
-        else:
-            drawAACircle(window, self.invColor, (self.x, self.y), radius + PAWN_OUTLINE)
-        # pionek
-        drawAACircle(window, self.color, (self.x, self.y), radius)
+        self._drawPawnBase(window)
 
 # "damka"
 class KingPawn(Pawn):
@@ -65,13 +77,6 @@ class KingPawn(Pawn):
         super().__init__(row, column, color)
 
     def draw(self, window):
-        radius = int(SQUARE_SIZE * PAWN_SQUARE_RATIO / 2)
-        # obrys
-        if PAWN_OUTLINE == 0:
-            pass
-        else:
-            drawAACircle(window, self.invColor, (self.x, self.y), radius + PAWN_OUTLINE)
-        # pionek
-        drawAACircle(window, self.color, (self.x, self.y), radius)
+        self._drawPawnBase(window)
         window.blit(SCALED_CROWN, (self.x - SCALED_CROWN.get_width()//2, self.y - SCALED_CROWN.get_height()//2))
 
