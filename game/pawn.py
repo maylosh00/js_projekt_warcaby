@@ -1,27 +1,19 @@
 import pygame
-from pygame import gfxdraw
 from .constant_values import BLACK, WHITE, SQUARE_SIZE, WIN_WIDTH, WIN_HEIGHT, WIDTH, HEIGHT, PAWN_SQUARE_RATIO, \
     PAWN_OUTLINE, SCALED_CROWN
-
-# metoda do rysowania wypełnionych okręgów po antialiasingu
-def drawAACircle(surface, color, coords, radius):
-    x, y = coords
-    gfxdraw.aacircle(surface, int(x), int(y), int(radius), color)
-    gfxdraw.filled_circle(surface, int(x), int(y), int(radius), color)
+from .draw_methods import drawAACircle
 
 class Pawn:
     def __init__(self, row, column, color):
         #TODO wyjątek, gdy podamy zły row, column
         self._row = row
         self._column = column
-        self._color = color
 
-        if self._color == WHITE:
+        if color == WHITE:
             self._invColor = BLACK
-            self._dir = 1
-        elif self._color == BLACK:
+        else:
             self._invColor = WHITE
-            self._dir = -1
+        self._color = color
         #TODO wyjątek, gdy wpiszemy zły kolor
 
         self.x = 0
@@ -39,8 +31,6 @@ class Pawn:
         return self._column
     def getColor(self):
         return self._color
-    def getDir(self):
-        return self._dir
 
     # prywatna metoda wydzielona z powodu duplikowania kodu
     def _drawPawnBase(self, window):

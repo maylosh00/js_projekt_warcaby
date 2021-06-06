@@ -2,6 +2,7 @@ import pygame
 from game.constant_values import WIN_WIDTH, WIN_HEIGHT, WIDTH, HEIGHT, SQUARE_SIZE, ROWS, COLUMNS
 from game.board import Board
 from game.game import Game
+from game.pawn import Pawn
 
 window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 pygame.display.set_caption('Warcaby')
@@ -40,6 +41,9 @@ def main():
                     #pawn = board.getPawnFromCoords(row, column)
                     #board.movePawn(pawn, (4, 3))
                     print(f'Coords: {row} {column}')
+                    game.select(row, column)
+                    if isinstance(game.board.getPawnFromCoords(row, column), Pawn):
+                        print(f'Możliwe ruchy: {game.board.getValidMoves(game.board.getPawnFromCoords(row, column))}')
 
 
         game.update()
