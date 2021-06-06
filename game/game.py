@@ -3,6 +3,7 @@ from .board import Board
 from .constant_values import WHITE, BLACK, BOARD_MEDIUM, SQUARE_SIZE, PAWN_SQUARE_RATIO, WIN_WIDTH, WIDTH, HEIGHT, \
     WIN_HEIGHT
 from .draw_methods import drawAACircle
+from .pawn import KingPawn
 
 
 class Game:
@@ -32,11 +33,27 @@ class Game:
         # sprawdzam czy pole na które chce przestawić jest puste i czy znajduje się w słowniku możliwych ruchów
         if self.selected and pawn == 0 and (row, column) in self.validMoves:
             self.board.movePawn(self.selected, (row, column))
+
+            skippedSquare = self.validMoves[(row, column)]
+            if skippedSquare:
+                self.board.remove(skippedSquare)
+
+            self.changeTurn()
+
         else:
             return False
         return True
 
+    def remove(self, pawns):
+        for pawn in pawns:
+            self.board.setValueAtCoords((pawn.getRow(), pawn.getColumn()), 0)
+            self.board.updatePawnCount(pawn.getColor(), -1)
+            if isinstance(pawn, KingPawn):
+                self.board.updateKingsCount(pawn.getColor(), -1)
+
     def changeTurn(self):
+        # zeruje słownik możliwych ruchów, aby nie przestał się wyświetlać na ekranie
+        self.validMoves = {}
         if self.turn == WHITE:
             self.turn = BLACK
         else:
@@ -49,6 +66,8 @@ class Game:
         if self.selected:
             result = self._move(row, column)
             if not result:
+                # zeruje słownik możliwych ruchów, aby nie przestał się wyświetlać na ekranie
+                self.validMoves = {}
                 self.selected = None
                 self.select(row, column)
         # zbieram to co się znajduje na klikniętym polu, sprawdzam czy to pionek odpowiedniego koloru i jakie ma
@@ -66,6 +85,6 @@ class Game:
             row, column = coords
             drawAACircle(self.window,BOARD_MEDIUM,(column * SQUARE_SIZE + SQUARE_SIZE // 2 + (WIN_WIDTH - WIDTH)/2,
                                                         row * SQUARE_SIZE + SQUARE_SIZE // 2 + (WIN_HEIGHT - HEIGHT)/2),
-                               SQUARE_SIZE * PAWN_SQUARE_RATIO * 0.5)
+                               SQUARE_SIZE * PAWN_SQUARE_RATIO / 2 * PAWN_SQUARE_RATIO)
 
 

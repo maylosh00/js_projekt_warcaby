@@ -11,6 +11,11 @@ class Board:
         self._blackKings = self._whiteKings = 0
         self.setUpBoard()
 
+    def setValueAtCoords(self, coords, value):
+        row, column = coords
+        self._board[row][column] = value
+        # TODO - wyjątek, gdy podamy złe współrzędne
+
     def updatePawnCount(self, color, count):
         if color == WHITE:
             self._whitePawnsLeft += count
@@ -18,7 +23,7 @@ class Board:
             self._blackPawnsLeft += count
         else:
             pass
-            #TODO - wyjątek gdy podamy zły kolor
+            # TODO - wyjątek gdy podamy zły kolor
 
     def updateKingsCount(self, color, count):
         if color == WHITE:
