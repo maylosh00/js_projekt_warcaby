@@ -41,9 +41,9 @@ class Board:
             for column in range(COLUMNS):
                 # "czarne" kwadraty (te, na których mogą znaleźć się pionki)
                 if row % 2 == ((column + 1) % 2):
-                    if row in (0, 1, 2):
+                    if row < PAWN_ROWS_PER_COLOR:
                         self._board[row].append(JustPawn(row, column, BLACK))
-                    elif row in (5, 6, 7):
+                    elif row > ROWS - PAWN_ROWS_PER_COLOR - 1:
                         self._board[row].append(JustPawn(row, column, WHITE))
                     else:
                         self._board[row].append(0)
@@ -68,15 +68,12 @@ class Board:
             text = SMALLFONT.render(str(ROWS-i), True, BOARD_DARK)
             x = (WIN_WIDTH - WIDTH) / 2
             y = (WIN_HEIGHT - HEIGHT) / 2
-            # if odpowiadający za centrowanie oznaczeń dla liczb dwucyfrowych
-            if ROWS-i >= 10:
-                window.blit(text, (x - BORDER_SIZE * 0.9, y + SQUARE_SIZE * i + SQUARE_SIZE * 0.3))
-            else:
-                window.blit(text, (x - BORDER_SIZE * 0.7, y + SQUARE_SIZE * i + SQUARE_SIZE * 0.3))
+            window.blit(text, (x - BORDER_SIZE * 0.5 - text.get_width()/2, y + SQUARE_SIZE * i + SQUARE_SIZE * 0.5 - text.get_height()/2))
             # litery
             text = SMALLFONT.render(letters[i], True, BOARD_DARK)
             y += HEIGHT
-            window.blit(text, (x + i * SQUARE_SIZE + SQUARE_SIZE * 0.4, y + BORDER_SIZE * 0.05))
+            window.blit(text, (x + i * SQUARE_SIZE + SQUARE_SIZE/2 - text.get_width()/2, y + BORDER_SIZE/2 - text.get_height()/2))
+
 
     def drawGame(self, window):
         self.drawBoard(window)
@@ -99,7 +96,7 @@ class Board:
         # Obsługa zamiany pionka w damkę, gdy dotrzemy do końca planszy. Ponieważ zamiana dzieje się podczas ruszenia
         # pionka (a ten nie może się cofać), nie musze uwzględniać warunków dotyczących kolorów pionków
         # TODO - Jednak trzeba uwzglednic warunki z kolorami, w klasycznych warcabach mozna bic do tylu
-        if row == 0 or row == ROWS:
+        if row == 0 or row == ROWS - 1:
             self._board[row][column] = KingPawn(row, column, pawn.getColor())
             if pawn.getColor() == WHITE:
                 self._whiteKings += 1

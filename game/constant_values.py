@@ -8,10 +8,11 @@ WIDTH, HEIGHT = 600, 600
 BORDER_SIZE = 25
 
 # plansze dotyczące pól i pionków
-ROWS, COLUMNS = 8, 8
+ROWS, COLUMNS = 6, 6
 SQUARE_SIZE = int(HEIGHT/ROWS)
 PAWN_SQUARE_RATIO = 0.55
 PAWN_OUTLINE = 2
+PAWN_ROWS_PER_COLOR = 2
 
 # kolory
 WHITE = (255, 255, 255)
@@ -25,6 +26,7 @@ BOARD_BLACK = (36, 17, 11)
 # tekst
 pygame.font.init()
 SMALLFONT = pygame.font.Font('assets/Lato/Lato-Bold.ttf', 18)
+BIGFONT = pygame.font.Font('assets/Lato/Lato-Black.ttf', 36)
 
 # png
 # TODO - posprzątaj tu
