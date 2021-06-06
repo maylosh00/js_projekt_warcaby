@@ -3,7 +3,7 @@ from .board import Board
 from .constant_values import WHITE, BLACK, BOARD_MEDIUM, SQUARE_SIZE, PAWN_SQUARE_RATIO, WIN_WIDTH, WIDTH, HEIGHT, \
     WIN_HEIGHT, BIGFONT, BORDER_SIZE
 from .draw_methods import drawAACircle
-from .pawn import KingPawn
+from .pawn import KingPawn, Pawn
 
 
 class Game:
@@ -70,8 +70,15 @@ class Game:
     # metoda odpalana przy kliknięciu na pole na planszy
     # TODO - implementacja bicia pionków
     def select(self, row, column):
+
         # jeżeli coś było już wybrane, kliknięcie pola zadecyduje o tym, czy można przestawić tam piona
         if self.selected:
+            # jeżeli wybieramy drugi raz to samo pole, odznaczamy je
+            if self.selected.getRow() == row and self.selected.getColumn() == column:
+                self.selected = None
+                self.validMoves = {}
+                return False
+
             result = self._move(row, column)
             if not result:
                 # zeruje słownik możliwych ruchów, aby nie przestał się wyświetlać na ekranie

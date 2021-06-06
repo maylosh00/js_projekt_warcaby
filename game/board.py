@@ -205,9 +205,26 @@ class Board:
             # góry"), ustawiam kolumnę na jedną do lewej
             moves.update(self._checkLeftDiagonal(row - 1, max(row - 3, -1), -1, pawn.getColor(), leftColumn))
             moves.update(self._checkRightDiagonal(row - 1, max(row - 3, -1), -1, pawn.getColor(), rightColumn))
+            # uwzględniam możliwość bicia do tyłu - tworzę słownik ruchów do tyłu i wybieram z niego tylko te,
+            # podczas których pion bije piona przeciwnika
+            if ALLOW_SKIPPING_BACKWARDS:
+                movesToCheck = {}
+                movesToCheck.update(self._checkLeftDiagonal(row + 1, min(row + 3, ROWS), 1, pawn.getColor(), leftColumn))
+                movesToCheck.update(self._checkRightDiagonal(row + 1, min(row + 3, ROWS), 1, pawn.getColor(), rightColumn))
+                for move in movesToCheck:
+                    if movesToCheck.get(move):
+                        moves[move] = movesToCheck.get(move)
+
+
         if pawn.getColor() == BLACK or isinstance(pawn, KingPawn):
             moves.update(self._checkLeftDiagonal(row + 1, min(row + 3, ROWS), 1, pawn.getColor(), leftColumn))
             moves.update(self._checkRightDiagonal(row + 1, min(row + 3, ROWS), 1, pawn.getColor(), rightColumn))
+            if ALLOW_SKIPPING_BACKWARDS:
+                movesToCheck = {}
+                movesToCheck.update(self._checkLeftDiagonal(row - 1, max(row - 3, -1), -1, pawn.getColor(), leftColumn))
+                movesToCheck.update(self._checkRightDiagonal(row - 1, max(row - 3, -1), -1, pawn.getColor(), rightColumn))
+                for move in movesToCheck:
+                    if movesToCheck.get(move):
+                        moves[move] = movesToCheck.get(move)
 
         return moves
-

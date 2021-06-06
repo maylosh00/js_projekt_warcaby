@@ -14,6 +14,9 @@ PAWN_SQUARE_RATIO = 0.55
 PAWN_OUTLINE = 2
 PAWN_ROWS_PER_COLOR = 3
 
+# flagi modyfikujące grę
+ALLOW_SKIPPING_BACKWARDS = True
+
 # kolory
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)

@@ -38,12 +38,7 @@ def main():
                 if 0 > row or row > ROWS-1 or 0 > column or column > COLUMNS-1:
                     pass
                 else:
-                    #pawn = board.getPawnFromCoords(row, column)
-                    #board.movePawn(pawn, (4, 3))
-                    print(f'Coords: {row} {column}')
                     game.select(row, column)
-                    if isinstance(game.board.getPawnFromCoords(row, column), Pawn):
-                        print(f'Możliwe ruchy: {game.board.getValidMoves(game.board.getPawnFromCoords(row, column))}')
 
 
         game.update()
