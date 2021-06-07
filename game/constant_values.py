@@ -17,6 +17,9 @@ PAWN_ROWS_PER_COLOR = 2
 # flagi modyfikujące grę
 ALLOW_SKIPPING_BACKWARDS = True
 
+# stałe zmieniające parametry gry
+FPS = 75
+
 # kolory
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
