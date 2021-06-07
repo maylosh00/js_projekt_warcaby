@@ -16,6 +16,7 @@ PAWN_ROWS_PER_COLOR = 2
 
 # flagi modyfikujące grę
 ALLOW_SKIPPING_BACKWARDS = True
+ALLOW_KING_LONGJUMP = True
 
 # stałe zmieniające parametry gry
 FPS = 75

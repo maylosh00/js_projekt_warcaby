@@ -74,7 +74,6 @@ class Board:
             y += HEIGHT
             window.blit(text, (x + i * SQUARE_SIZE + SQUARE_SIZE/2 - text.get_width()/2, y + BORDER_SIZE/2 - text.get_height()/2))
 
-
     def drawGame(self, window):
         self.drawBoard(window)
         for row in range(ROWS):
@@ -101,7 +100,6 @@ class Board:
             self._board[row][column] = KingPawn(row, column, BLACK)
             self._blackKings += 1
 
-    # TODO - obsługa poruszania się damką
     # metody odpowiedzialne za znalezienie możliwych ruchów dla wybranego pionka
     # sprawdzanie lewej przekątnej od wybranego pionka, prawa działa analogicznie
     def _checkLeftDiagonal(self, start, end, direction, color, column, isKing, skippedPawns=[]):
@@ -125,7 +123,6 @@ class Board:
                     break
                 # jeżeli nic i jest to drugie analizowane pole bo biciu, dodaje ruch jako możliwy
                 elif skippedPawns:
-                    print(skippedPawns)
                     moves[(row, column)] = previousSquare + skippedPawns
                 # jeżeli nic i nie było bicia, dodaje ruch jako możliwy
                 else:
@@ -152,7 +149,7 @@ class Board:
                     if ALLOW_SKIPPING_BACKWARDS:
                         # możliwość bicia we wszystkie strony oznacza jednocześnie możliwość wpadnięcia w nieskończoną
                         # pętle przez algorytm, następne ify zabezpieczają program przed taką sytuacją
-                        if row - direction >= 0 and row - direction < ROWS and column - 1 >= 0 and column + 1 < COLUMNS:
+                        if 0 <= row - direction < ROWS and column - 1 >= 0 and column + 1 < COLUMNS:
                             if self.getPawnFromCoords(row - direction, column - 1) not in skippedPawns:
                                 moves.update(
                                     self._checkLeftDiagonal(row - direction, newEndBackwards, -direction, color, column - 1, isKing, skippedPawns = moves[(row, column)]))
@@ -161,7 +158,7 @@ class Board:
                                     self._checkRightDiagonal(row - direction, newEndBackwards, -direction, color, column + 1, isKing, skippedPawns = moves[(row, column)]))
                 # wychodzę z pętli aby uniknąć dodawania dodatkowych ruchów po uznaniu ruchu na pierwsze puste pole
                 # bez bicia (w przeciwnym wypadku, pionki mogłyby się poruszać na 2 pola do przodu, jeśli oba są wolne)
-                if not isKing:
+                if not isKing or not ALLOW_KING_LONGJUMP:
                     break
             # jeżeli pole jest pionkiem tego samego koloru, nie mogę się tu ruszyć
             elif isinstance(currentSquare, Pawn):
@@ -185,11 +182,6 @@ class Board:
                 if skippedPawns and not previousSquare:
                     break
                 elif skippedPawns:
-                    for pawn in skippedPawns:
-                        print(pawn)
-                        print(f'Pole pionka: {pawn.getRow()}, {pawn.getColumn()}')
-                    for square in previousSquare:
-                        print(f'Previous square: {square.getRow()}, {square.getColumn()}')
                     moves[(row, column)] = previousSquare + skippedPawns
                 else:
                     moves[(row, column)] = previousSquare
@@ -208,14 +200,14 @@ class Board:
                                                           skippedPawns = moves[(row, column)]))
 
                     if ALLOW_SKIPPING_BACKWARDS:
-                        if row - direction >= 0 and row - direction < ROWS and column - 1 >= 0 and column + 1 < COLUMNS:
+                        if 0 <= row - direction < ROWS and column - 1 >= 0 and column + 1 < COLUMNS:
                             if self.getPawnFromCoords(row - direction, column - 1) not in skippedPawns:
                                 moves.update(
                                     self._checkLeftDiagonal(row - direction, newEndBackwards, -direction, color, column - 1, isKing, skippedPawns = moves[(row, column)]))
                             if self.getPawnFromCoords(row - direction, column + 1) not in skippedPawns:
                                 moves.update(
                                     self._checkRightDiagonal(row - direction, newEndBackwards, -direction, color, column + 1, isKing, skippedPawns = moves[(row, column)]))
-                if not isKing:
+                if not isKing or not ALLOW_KING_LONGJUMP:
                     break
 
             elif isinstance(currentSquare, Pawn):
@@ -233,35 +225,35 @@ class Board:
         rightColumn = pawn.getColumn() + 1
         row = pawn.getRow()
 
+
         if isinstance(pawn, KingPawn):
             moves.update(self._checkLeftDiagonal(row - 1, -1, -1, pawn.getColor(), leftColumn, True))
             moves.update(self._checkRightDiagonal(row - 1, -1, -1, pawn.getColor(), rightColumn, True))
-            moves.update(self._checkLeftDiagonal(row + 1, ROWS, 1, pawn.getColor(), leftColumn, isinstance(pawn, KingPawn)))
-            moves.update(self._checkRightDiagonal(row + 1, ROWS, 1, pawn.getColor(), rightColumn, isinstance(pawn, KingPawn)))
+            moves.update(self._checkLeftDiagonal(row + 1, ROWS, 1, pawn.getColor(), leftColumn, True))
+            moves.update(self._checkRightDiagonal(row + 1, ROWS, 1, pawn.getColor(), rightColumn, True))
 
-        if pawn.getColor() == WHITE:
-            # zaczynam sprawdzać od pola na przód od pionka (row-1) a sprawdzam 2 pola do przodu (uwzględniam
-            # możliwość bicia) lub do wiersza 0 (górny koniec planszy), poruszam się o krok -1 (wiersze maleją "do
-            # góry"), ustawiam kolumnę na jedną do lewej
-            moves.update(self._checkLeftDiagonal(row - 1, max(row - 3, -1), -1, pawn.getColor(), leftColumn, isinstance(pawn, KingPawn)))
-            moves.update(self._checkRightDiagonal(row - 1, max(row - 3, -1), -1, pawn.getColor(), rightColumn, isinstance(pawn, KingPawn)))
+        else:
+            if pawn.getColor() == WHITE:
+                endRow = max(row - 3, -1)
+                endRowBackwards = min(row + 3, ROWS)
+                direction = -1
+            else:
+                endRow = min(row + 3, ROWS)
+                endRowBackwards = max(row - 3, -1)
+                direction = 1
+            # zaczynam sprawdzać od pola na przód od pionka (row + direction) a sprawdzam 2 pola do przodu (
+            # uwzględniam możliwość bicia) lub do wiersza 0/ROWS (koniec planszy), poruszam się o krok direction (dla
+            # białych idę "do góry", dla czarnych w dół), ustawiam kolumnę na jedną do lewej lub prawej
+            moves.update(self._checkLeftDiagonal(row + direction, endRow, direction, pawn.getColor(), leftColumn,
+                                                 isinstance(pawn, KingPawn)))
+            moves.update(self._checkRightDiagonal(row + direction, endRow, direction, pawn.getColor(), rightColumn,
+                                                  isinstance(pawn, KingPawn)))
             # uwzględniam możliwość bicia do tyłu - tworzę słownik ruchów do tyłu i wybieram z niego tylko te,
             # podczas których pion bije piona przeciwnika
             if ALLOW_SKIPPING_BACKWARDS:
                 movesToCheck = {}
-                movesToCheck.update(self._checkLeftDiagonal(row + 1, min(row + 3, ROWS), 1, pawn.getColor(), leftColumn, isinstance(pawn, KingPawn)))
-                movesToCheck.update(self._checkRightDiagonal(row + 1, min(row + 3, ROWS), 1, pawn.getColor(), rightColumn, isinstance(pawn, KingPawn)))
-                for move in movesToCheck:
-                    if movesToCheck.get(move):
-                        moves[move] = movesToCheck.get(move)
-
-        if pawn.getColor() == BLACK:
-            moves.update(self._checkLeftDiagonal(row + 1, min(row + 3, ROWS), 1, pawn.getColor(), leftColumn, isinstance(pawn, KingPawn)))
-            moves.update(self._checkRightDiagonal(row + 1, min(row + 3, ROWS), 1, pawn.getColor(), rightColumn, isinstance(pawn, KingPawn)))
-            if ALLOW_SKIPPING_BACKWARDS:
-                movesToCheck = {}
-                movesToCheck.update(self._checkLeftDiagonal(row - 1, max(row - 3, -1), -1, pawn.getColor(), leftColumn, isinstance(pawn, KingPawn)))
-                movesToCheck.update(self._checkRightDiagonal(row - 1, max(row - 3, -1), -1, pawn.getColor(), rightColumn, isinstance(pawn, KingPawn)))
+                movesToCheck.update(self._checkLeftDiagonal(row - direction, endRowBackwards, -direction, pawn.getColor(), leftColumn, isinstance(pawn, KingPawn)))
+                movesToCheck.update(self._checkRightDiagonal(row - direction, endRowBackwards, -direction, pawn.getColor(), rightColumn, isinstance(pawn, KingPawn)))
                 for move in movesToCheck:
                     if movesToCheck.get(move):
                         moves[move] = movesToCheck.get(move)
