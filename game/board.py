@@ -13,21 +13,18 @@ class Board:
     def __init__(self):
         # wirtualna plansza - przechowuje aktualny stan gry w postaci [[0, Pawn, 0, Pawn, ...], [...], ...]
         self._board = [[]]
-        self._blackPawnsLeft = self._whitePawnsLeft = self._calculatePawns()
         self._blackKings = self._whiteKings = 0
         self.setUpBoard()
-        self._calculatePawns()
+        self._whitePawnsLeft =self._calculatePawns(WHITE)
+        self._blackPawnsLeft = self._calculatePawns(BLACK)
 
     # funkcja określająca ilość pionków przypadających na gracza
-    def _calculatePawns(self):
+    def _calculatePawns(self, color):
         i = 0
-        current = 0
         for row in self._board:
-            if current < PAWN_ROWS_PER_COLOR:
-                for element in row:
-                    if isinstance(element, Pawn):
-                        i += 1
-            current += 1
+            for element in row:
+                if isinstance(element, Pawn) and element.getColor() == color:
+                    i += 1
         return i
 
     def setValueAtCoords(self, coords, value):
@@ -69,6 +66,16 @@ class Board:
                 else:
                     self._board[row].append(0)
 
+    # metoda potrzebna do przeprowadzenia testów - ustawia pionki na planszy w przekazany sposób
+    def setUpCustomBoard(self, board):
+        self._board = [[]]
+        for row in range(ROWS):
+            # tworzę plansze 8 wierszy
+            self._board.append([])
+            for column in range(COLUMNS):
+                self._board[row].append(board[row][column])
+                print(self._board[row][column])
+
     def _drawBoard(self, window):
         # rysowanie "stołu" wraz z planszą
         window.fill(BOARD_MEDIUM)
@@ -109,6 +116,15 @@ class Board:
 
     def getPawnFromCoords(self, row, column):
         return self._board[row][column]
+
+    def getPawnsLeft(self, color):
+        if color == WHITE:
+            return self._whitePawnsLeft
+        elif color == BLACK:
+            return self._blackPawnsLeft
+        else:
+            pass
+            # TODO - Wyjątek gdy podamy zły kolor
 
     def movePawn(self, pawn, coords):
         row, column = coords
@@ -250,9 +266,6 @@ class Board:
                         moves[move] = movesToCheck.get(move)
 
         return moves
-
-
-
 
 
     # # metody odpowiedzialne za znalezienie możliwych ruchów dla wybranego pionka

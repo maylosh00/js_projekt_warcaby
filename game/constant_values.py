@@ -1,7 +1,5 @@
 import pygame
 
-# TODO - stałe potrzebne tylko dla konkretnych klas wrzuć do tych klas
-
 # stałe do rysowania planszy
 WIN_WIDTH, WIN_HEIGHT = 700, 800
 WIDTH, HEIGHT = 600, 600

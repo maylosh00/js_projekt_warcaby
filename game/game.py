@@ -1,9 +1,9 @@
 import pygame
 from .board import Board
 from .constant_values import WHITE, BLACK, BOARD_MEDIUM, SQUARE_SIZE, PAWN_SQUARE_RATIO, WIN_WIDTH, WIDTH, HEIGHT, \
-    WIN_HEIGHT, BIGFONT, BORDER_SIZE
+    WIN_HEIGHT, BIGFONT, BORDER_SIZE, BOARD_BLACK, SMALLFONT
 from .draw_methods import drawAACircle
-from .pawn import KingPawn, Pawn
+from .pawn import KingPawn
 
 
 class Game:
@@ -16,19 +16,29 @@ class Game:
         self.selected = None
         self.board = Board()
         self.turn = WHITE
-        #self.drawTurnInfo(WHITE)
         self.validMoves = {}
+        self._winner = None
+
+    def setUpCustomGame(self, board, color):
+        self._initValues()
+        self.board.setUpCustomBoard(board)
+        self.turn = color
 
     def reset(self):
         self._initValues()
 
-    # metoda rysująca grę
+    # metoda rysująca grę / ekran końcowy
     def update(self):
-        self.board.drawGame(self.window)
-        self.drawValidMoves(self.validMoves)
-        self.drawTurnInfo()
-        if self.selected:
-            self.drawSelectedPawn(self.selected)
+        self._winner = self.returnWinner()
+        if self._winner:
+            self._drawWinnerMessage(self._winner)
+        else:
+            self.board.drawGame(self.window)
+            self.drawValidMoves(self.validMoves)
+            self.drawTurnInfo()
+            if self.selected:
+                self.drawSelectedPawn(self.selected)
+
         pygame.display.update()
 
     # metoda odpowiedzialna za ruszanie pionka
@@ -48,6 +58,7 @@ class Game:
             return False
         return True
 
+    # metoda odpowiedzialna za usunięcie pionka - tutaj czy w board.py?
     def remove(self, pawns):
         for pawn in pawns:
             self.board.setValueAtCoords((pawn.getRow(), pawn.getColumn()), 0)
@@ -55,20 +66,23 @@ class Game:
             if isinstance(pawn, KingPawn):
                 self.board.updateKingsCount(pawn.getColor(), -1)
 
+    def returnWinner(self):
+        if self.board.getPawnsLeft(WHITE) <= 0:
+            return BLACK
+        elif self.board.getPawnsLeft(BLACK) <= 0:
+            return WHITE
+        return None
+
     def changeTurn(self):
         # zeruje słownik możliwych ruchów, aby nie przestał się wyświetlać na ekranie
         self.validMoves = {}
         self.selected = None
         if self.turn == WHITE:
             self.turn = BLACK
-            #self.drawTurnInfo(BLACK)
         else:
             self.turn = WHITE
-            #self.drawTurnInfo(WHITE)
-
 
     # metoda odpalana przy kliknięciu na pole na planszy
-    # TODO - implementacja bicia pionków
     def select(self, row, column):
 
         # jeżeli coś było już wybrane, kliknięcie pola zadecyduje o tym, czy można przestawić tam piona
@@ -119,3 +133,23 @@ class Game:
             text = BIGFONT.render("Tura CZARNYCH", True, BLACK)
             self.window.blit(text, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - text.get_width()/2,
                                     (WIN_HEIGHT - HEIGHT - BORDER_SIZE) / 2 - ((WIN_HEIGHT - HEIGHT - BORDER_SIZE) / 2) / 2 - text.get_height()/2))
+
+    def _drawWinnerMessage(self, color):
+        self.window.fill(BOARD_MEDIUM)
+        pygame.draw.rect(self.window, BOARD_BLACK, (
+            (WIN_WIDTH - WIDTH) / 2 - BORDER_SIZE, (WIN_HEIGHT - HEIGHT) / 2 - BORDER_SIZE, WIDTH + BORDER_SIZE * 2,
+            HEIGHT + BORDER_SIZE * 2))
+        if color == WHITE:
+            text = BIGFONT.render("Wygrały BIAŁE!", True, WHITE)
+        else:
+            text = BIGFONT.render("Wygrały CZARNE!", True, WHITE)
+        self.window.blit(text, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - text.get_width()/2,
+                                    WIN_HEIGHT/2 - text.get_height()/2 - HEIGHT/4))
+
+        longtext1 = SMALLFONT.render("Aby rozpocząć nową grę - wciśnij ENTER", True, WHITE)
+        longtext2 = SMALLFONT.render("Aby wyjść - wciśnij Q", True, WHITE)
+
+        self.window.blit(longtext1, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - longtext1.get_width()/2,
+                                    WIN_HEIGHT/2 - text.get_height()/2 - HEIGHT/4 + text.get_height()*1.5))
+        self.window.blit(longtext2, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - longtext2.get_width()/2,
+                                    WIN_HEIGHT/2 - text.get_height()/2 - HEIGHT/4 + text.get_height()*1.5 + longtext1.get_height()*1.5))
