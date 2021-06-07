@@ -127,6 +127,7 @@ class Board:
                     break
                 # jeżeli nic i jest to drugie analizowane pole bo biciu, dodaje ruch jako możliwy
                 elif skippedPawns:
+                    print(skippedPawns)
                     moves[(row, column)] = previousSquare + skippedPawns
                 # jeżeli nic i nie było bicia, dodaje ruch jako możliwy
                 else:
@@ -143,21 +144,21 @@ class Board:
                         newEndBackwards = max(row - 3, -1)
 
 
-                    if row + direction < ROWS and row + direction >= 0 and column + 1 < COLUMNS and column - 1 >=0:
-                        if self.getPawnFromCoords(row + direction, column - 1) not in skippedPawns:
-                            moves.update(self._checkLeftDiagonal(row + direction, newEnd, direction, color, column - 1,
-                                                             skippedPawns = previousSquare))
-                        if self.getPawnFromCoords(row + direction, column + 1) not in skippedPawns:
-                            moves.update(self._checkRightDiagonal(row + direction, newEnd, direction, color, column + 1,
-                                                              skippedPawns = previousSquare))
-                         # jeżeli flaga bicia do tyłu jest ustawiona na True - sprawdzam również bicia do tyłu
-                        if ALLOW_SKIPPING_BACKWARDS:
-                            if self.getPawnFromCoords(row - direction, column - 1) not in skippedPawns:
-                                moves.update(
-                                    self._checkLeftDiagonal(row - direction, newEndBackwards, -direction, color, column - 1, skippedPawns = previousSquare))
-                            if self.getPawnFromCoords(row - direction, column + 1) not in skippedPawns:
-                                moves.update(
-                                    self._checkRightDiagonal(row - direction, newEndBackwards, -direction, color, column + 1, skippedPawns = previousSquare))
+                    #if row + direction < ROWS and row + direction >= 0 and column + 1 < COLUMNS and column - 1 >=0:
+                    if self.getPawnFromCoords(row + direction, column - 1) not in skippedPawns:
+                        moves.update(self._checkLeftDiagonal(row + direction, newEnd, direction, color, column - 1,
+                                                             skippedPawns = moves[(row, column)]))
+                    if self.getPawnFromCoords(row + direction, column + 1) not in skippedPawns:
+                        moves.update(self._checkRightDiagonal(row + direction, newEnd, direction, color, column + 1,
+                                                              skippedPawns = moves[(row, column)]))
+                    #jeżeli flaga bicia do tyłu jest ustawiona na True - sprawdzam również bicia do tyłu
+                    if ALLOW_SKIPPING_BACKWARDS:
+                        if self.getPawnFromCoords(row - direction, column - 1) not in skippedPawns:
+                            moves.update(
+                                self._checkLeftDiagonal(row - direction, newEndBackwards, -direction, color, column - 1, skippedPawns = previousSquare))
+                        if self.getPawnFromCoords(row - direction, column + 1) not in skippedPawns:
+                            moves.update(
+                                self._checkRightDiagonal(row - direction, newEndBackwards, -direction, color, column + 1, skippedPawns = previousSquare))
                 # wychodzę z pętli aby uniknąć dodawania dodatkowych ruchów po uznaniu ruchu na pierwsze puste pole
                 # bez bicia (w przeciwnym wypadku, pionki mogłyby się poruszać na 2 pola do przodu, jeśli oba są wolne)
                 break
@@ -172,7 +173,7 @@ class Board:
 
         return moves
 
-    def _checkRightDiagonal(self, start, end, direction, color, column, skippedPawns=[]):
+    def _checkRightDiagonal(self, start, end, direction, color, column, skippedPawns = []):
         moves = {}
         previousSquare = []
         for row in range(start, end, direction):
@@ -183,6 +184,11 @@ class Board:
                 if skippedPawns and not previousSquare:
                     break
                 elif skippedPawns:
+                    for pawn in skippedPawns:
+                        print(pawn)
+                        print(f'Pole pionka: {pawn.getRow()}, {pawn.getColumn()}')
+                    for square in previousSquare:
+                        print(f'Previous square: {square.getRow()}, {square.getColumn()}')
                     moves[(row, column)] = previousSquare + skippedPawns
                 else:
                     moves[(row, column)] = previousSquare
@@ -195,21 +201,21 @@ class Board:
                         newEnd = min(row + 3, ROWS)
                         newEndBackwards = max(row - 3, -1)
 
-                    if row + direction < ROWS and row + direction >= 0 and column + 1 < COLUMNS and column - 1 >= 0:
-                        if self.getPawnFromCoords(row + direction, column - 1) not in skippedPawns:
-                            moves.update(self._checkLeftDiagonal(row + direction, newEnd, direction, color, column - 1,
-                                                             skippedPawns = previousSquare))
-                        if self.getPawnFromCoords(row + direction, column + 1) not in skippedPawns:
-                            moves.update(self._checkRightDiagonal(row + direction, newEnd, direction, color, column + 1,
-                                                              skippedPawns = previousSquare))
+                    #if row + direction < ROWS and row + direction >= 0 and column + 1 < COLUMNS and column - 1 >= 0:
+                    if self.getPawnFromCoords(row + direction, column - 1) not in skippedPawns:
+                        moves.update(self._checkLeftDiagonal(row + direction, newEnd, direction, color, column - 1,
+                                                         skippedPawns = moves[(row, column)]))
+                    if self.getPawnFromCoords(row + direction, column + 1) not in skippedPawns:
+                        moves.update(self._checkRightDiagonal(row + direction, newEnd, direction, color, column + 1,
+                                                          skippedPawns = moves[(row, column)]))
 
-                        if ALLOW_SKIPPING_BACKWARDS:
-                            if self.getPawnFromCoords(row - direction, column - 1) not in skippedPawns:
-                                moves.update(
-                                    self._checkLeftDiagonal(row - direction, newEndBackwards, -direction, color, column - 1, skippedPawns = previousSquare))
-                            if self.getPawnFromCoords(row - direction, column + 1) not in skippedPawns:
-                                moves.update(
-                                    self._checkRightDiagonal(row - direction, newEndBackwards, -direction, color, column + 1, skippedPawns = previousSquare))
+                    if ALLOW_SKIPPING_BACKWARDS:
+                        if self.getPawnFromCoords(row - direction, column - 1) not in skippedPawns:
+                            moves.update(
+                                self._checkLeftDiagonal(row - direction, newEndBackwards, -direction, color, column - 1, skippedPawns = previousSquare))
+                        if self.getPawnFromCoords(row - direction, column + 1) not in skippedPawns:
+                            moves.update(
+                                self._checkRightDiagonal(row - direction, newEndBackwards, -direction, color, column + 1, skippedPawns = previousSquare))
                 break
 
             elif isinstance(currentSquare, Pawn):
