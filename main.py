@@ -9,6 +9,7 @@ pygame.display.set_caption('Warcaby')
 
 FPS = 60
 
+
 def getRowColumnCoordsFromMousePos(mousePos):
     x, y = mousePos
     # nie sprawdzam czy kursor znajduje się na planszy, będą o tym świadczyły koordynaty np. w postaci
@@ -17,11 +18,11 @@ def getRowColumnCoordsFromMousePos(mousePos):
     row = (y - (WIN_HEIGHT - HEIGHT)/2) // SQUARE_SIZE
     return int(row), int(column)
 
+
 def main():
     run = True
     clock = pygame.time.Clock()
     game = Game(window)
-
 
     while run:
         clock.tick(FPS)
@@ -40,11 +41,10 @@ def main():
                 else:
                     game.select(row, column)
 
-
         game.update()
 
-
     pygame.quit()
+
 
 main()
 
