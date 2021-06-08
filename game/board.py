@@ -4,6 +4,7 @@ from .pawn import JustPawn, KingPawn, Pawn
 from enum import Enum
 from .exceptions import *
 
+
 # enum utworzony dla jednego parametru przekazywanego do funkcji _checkDiagonal
 class LR(Enum):
     Left = 1,
@@ -21,6 +22,11 @@ class Board:
 
     # funkcja określająca ilość pionków przypadających na gracza
     def _calculatePawns(self, color):
+        """
+        Calculates the amount of pawns in given color on the board
+        :param color: representation of color in (int, int, int) format
+        :return int: calculated amount of pawns
+        """
         i = 0
         for row in self._board:
             for element in row:
@@ -29,12 +35,22 @@ class Board:
         return i
 
     def setValueAtCoords(self, coords, value):
+        """
+        Sets virtual board at given coordinates to a given value
+        :param coords: (int, int) tuple of row and column
+        :param value: value to set at given coordinates
+        """
         row, column = coords
         if row < 0 or row >= ROWS or column < 0 or column >= COLUMNS:
             raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
         self._board[row][column] = value
 
     def updatePawnCount(self, color, count):
+        """
+        Changes the amount of pawns of a given color on a board by a given number
+        :param color: representation of color in (int, int, int) format
+        :param count: int to be added to pawn count parameter
+        """
         if color == WHITE:
             self._whitePawnsLeft += count
         elif color == BLACK:
@@ -43,6 +59,11 @@ class Board:
             raise incorrectColorValueException('Only black / white colored pawns are accepted')
 
     def updateKingsCount(self, color, count):
+        """
+        Changes the amount of king pawns of a given color on a board by a given number
+        :param color: representation of color in (int, int, int) format
+        :param count: int to be added to pawn count parameter
+        """
         if color == WHITE:
             self._whiteKings += count
         elif color == BLACK:
@@ -51,6 +72,9 @@ class Board:
             raise incorrectColorValueException('Only black / white colored pawns are accepted')
 
     def setUpBoard(self):
+        """
+        Sets virtual board to default values based on ROW, COLUMNS and PAWN_ROWS_PER_COLOR constants
+        """
         for row in range(ROWS):
             # tworzę plansze 8 wierszy
             self._board.append([])
@@ -68,6 +92,10 @@ class Board:
 
     # metoda potrzebna do przeprowadzenia testów - ustawia pionki na planszy w przekazany sposób
     def setUpCustomBoard(self, board):
+        """
+        Sets virtual board to fixed values based on board sent
+        :param board: list of lists of integers / Pawn objects
+        """
         if len(board) != ROWS or len(board[0]) != COLUMNS:
             raise incorrectBoardSize('Custom board size have to be exactly ROWS x COLUMNS')
 
@@ -79,6 +107,10 @@ class Board:
                 self._board[row].append(board[row][column])
 
     def _drawBoard(self, window):
+        """
+        Draws table and board on a given window
+        :param window: pygame.display object
+        """
         # rysowanie "stołu" wraz z planszą
         window.fill(BOARD_MEDIUM)
         pygame.draw.rect(window, BOARD_BLACK, (
@@ -109,6 +141,10 @@ class Board:
             x + i * SQUARE_SIZE + SQUARE_SIZE / 2 - text.get_width() / 2, y + BORDER_SIZE / 2 - text.get_height() / 2))
 
     def drawGame(self, window):
+        """
+        Draws board and pawns on it
+        :param window: pygame.display object
+        """
         self._drawBoard(window)
         for row in range(ROWS):
             for column in range(COLUMNS):
@@ -117,11 +153,22 @@ class Board:
                     pawn.draw(window)
 
     def getPawnFromCoords(self, row, column):
+        """
+        Returns whatever is on (row, column) coordinates of virtual board
+        :param row: int
+        :param column: int
+        :return: 0 or Pawn object
+        """
         if row < 0 or row >= ROWS or column < 0 or column >= COLUMNS:
             raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
         return self._board[row][column]
 
     def getPawnsLeft(self, color):
+        """
+        Returns amount of pawns of a given color left on a board
+        :param color: representation of color in (int, int, int) format
+        :return: int: amount of pawns left of a given color
+        """
         if color == WHITE:
             return self._whitePawnsLeft
         elif color == BLACK:
@@ -130,6 +177,11 @@ class Board:
             raise incorrectColorValueException('Only black / white colored pawns are accepted')
 
     def movePawn(self, pawn, coords):
+        """
+        Moves given pawn to given coordinates and checks if it should be upgraded to a king pawn
+        :param pawn: Pawn object
+        :param coords: coordinates in tuple[int, int] format of row and column
+        """
         row, column = coords
         if row < 0 or row >= ROWS or column < 0 or column >= COLUMNS:
             raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
@@ -148,6 +200,18 @@ class Board:
             self._blackKings += 1
 
     def _checkDiagonal(self, side, start, end, direction, color, column, isKing, skippedPawns=[]):
+        """
+        Method scanning a diagonal (left or right) to check for possible moves (if any are possible)
+        :param side: object of LR enum class (left or right)
+        :param start: int - row from which algorithm should start looking for a possible move
+        :param end: int - row at which algorithm should stop looking for a possible move
+        :param direction: int (-1 or 1) - direction in which algorithm should iterate through rows
+        :param color: representation of color in (int, int, int) format
+        :param column: column at which algorithm should start looking for a possible move
+        :param isKing: boolean value, informs about whether the pawn the algorithm is  checking diagonals for is a king
+        :param skippedPawns: array of Pawn objects, used when called recursively
+        :return: dictionary of possible moves in format (row, column) = [<Pawn Object>, <Pawn Object>, ...]
+        """
         left = LR.Left
         right = LR.Right
         # słownik przechowujący dostępne ruchy w postaci: (3,0) = [<Pawn>, <Pawn>, ...], gdzie kluczami są dostępne
@@ -226,6 +290,11 @@ class Board:
         return moves
 
     def getValidMoves(self, pawn):
+        """
+        Method using scanning diagonals algorithm for a given pawn, returning all possible moves
+        :param pawn: Pawn object
+        :return: dictionary of possible moves in format (row, column) = [<Pawn Object>, <Pawn Object>, ...]
+        """
         moves = {}
         leftColumn = pawn.getColumn() - 1
         rightColumn = pawn.getColumn() + 1

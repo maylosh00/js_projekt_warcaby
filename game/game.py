@@ -21,6 +21,12 @@ class Game:
         self._winner = None
 
     def setUpCustomGame(self, board, color):
+        """
+        Sets up custom game with given board and color which starts
+        :param board: list of lists of integers / Pawn objects
+        :param color: representation of color in tuple[int, int, int] format
+        :return:
+        """
         if color != WHITE or color != BLACK:
             raise incorrectColorValueException('Only black / white colored pawns are accepted')
         self._initValues()
@@ -32,6 +38,9 @@ class Game:
 
     # metoda rysująca grę / ekran końcowy
     def update(self):
+        """
+        Method drawing the game / winner screen
+        """
         self._winner = self.returnWinner()
         if self._winner:
             self._drawWinnerMessage(self._winner)
@@ -46,6 +55,12 @@ class Game:
 
     # metoda odpowiedzialna za ruszanie pionka
     def _move(self, row, column):
+        """
+        Method checking if selected pawn can be moved to (row, column)
+        :param row: int
+        :param column: int
+        :return: boolean - True if pawn has been moved, False if not
+        """
         pawn = self.board.getPawnFromCoords(row, column)
         # sprawdzam czy pole na które chce przestawić jest puste i czy znajduje się w słowniku możliwych ruchów
         if self.selected and pawn == 0 and (row, column) in self.validMoves:
@@ -56,13 +71,16 @@ class Game:
                 self.remove(skippedSquares)
 
             self.changeTurn()
-
         else:
             return False
         return True
 
-    # metoda odpowiedzialna za usunięcie pionka - tutaj czy w board.py?
+    # metoda odpowiedzialna za usunięcie pionków
     def remove(self, pawns):
+        """
+        Method removing pawns from a board
+        :param pawns: list of Pawn objects
+        """
         for pawn in pawns:
             self.board.setValueAtCoords((pawn.getRow(), pawn.getColumn()), 0)
             self.board.updatePawnCount(pawn.getColor(), -1)
@@ -70,6 +88,10 @@ class Game:
                 self.board.updateKingsCount(pawn.getColor(), -1)
 
     def returnWinner(self):
+        """
+        checks if game has been finished and returns winner
+        :return: color in tuple[int,int,int] format or None
+        """
         if self.board.getPawnsLeft(WHITE) <= 0:
             return BLACK
         elif self.board.getPawnsLeft(BLACK) <= 0:
@@ -77,6 +99,9 @@ class Game:
         return None
 
     def changeTurn(self):
+        """
+        Changes turn from one color to another, clears selected pawn and it's valid moves
+        """
         # zeruje słownik możliwych ruchów, aby nie przestał się wyświetlać na ekranie
         self.validMoves = {}
         self.selected = None
@@ -87,6 +112,13 @@ class Game:
 
     # metoda odpalana przy kliknięciu na pole na planszy
     def select(self, row, column):
+        """
+        Selects pawn from a given row, column
+        If something has already been selected checks if it can be moved to a given row, column
+        If row, column is the same as selected pawn's row, column, clear select
+        :param row: int
+        :param column: int
+        """
 
         if row < 0 or row >= ROWS or column < 0 or column >= COLUMNS:
             raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
@@ -116,6 +148,10 @@ class Game:
         return False
 
     def drawSelectedPawn(self, pawn):
+        """
+        Highlights given pawn on a board
+        :param pawn: Pawn object
+        """
         row = pawn.getRow()
         column = pawn.getColumn()
         pygame.draw.rect(self.window, BOARD_MEDIUM, (
@@ -124,6 +160,10 @@ class Game:
         pawn.draw(self.window)
 
     def drawValidMoves(self, moves):
+        """
+        Highlights valid moves as little circles on a board
+        :param moves: list of tuple[int,int] objects
+        """
         for coords in moves:
             row, column = coords
             if row < 0 or row >= ROWS or column < 0 or column >= COLUMNS:
@@ -133,6 +173,9 @@ class Game:
                                SQUARE_SIZE * PAWN_SQUARE_RATIO / 2 * PAWN_SQUARE_RATIO)
 
     def drawTurnInfo(self):
+        """
+        Draws text information about which color's turn is it now above the board
+        """
         if self.turn == WHITE:
             text = BIGFONT.render("Tura BIAŁYCH", True, WHITE)
             self.window.blit(text, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - text.get_width()/2,
@@ -143,6 +186,10 @@ class Game:
                                     (WIN_HEIGHT - HEIGHT - BORDER_SIZE) / 2 - ((WIN_HEIGHT - HEIGHT - BORDER_SIZE) / 2) / 2 - text.get_height()/2))
 
     def _drawWinnerMessage(self, color):
+        """
+        Draws information about winner and asks to play again / quit the game after winning
+        :param color: color in tuple[int,int,int] format or None
+        """
         self.window.fill(BOARD_MEDIUM)
         pygame.draw.rect(self.window, BOARD_BLACK, (
             (WIN_WIDTH - WIDTH) / 2 - BORDER_SIZE, (WIN_HEIGHT - HEIGHT) / 2 - BORDER_SIZE, WIDTH + BORDER_SIZE * 2,
