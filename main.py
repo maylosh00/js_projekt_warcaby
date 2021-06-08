@@ -32,8 +32,6 @@ def main():
     run = True
     clock = pygame.time.Clock()
     game = Game(window)
-    #won = False
-    #game.setUpCustomGame(testBoard, WHITE)
 
     while run:
         # używam metody tick do aktualizowania zegara i czekania odpowiednią ilość czasu, aby gra chodziła w podanej

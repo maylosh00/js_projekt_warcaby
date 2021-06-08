@@ -2,6 +2,7 @@ import pygame
 from .constant_values import *
 from .pawn import JustPawn, KingPawn, Pawn
 from enum import Enum
+from .exceptions import *
 
 # enum utworzony dla jednego parametru przekazywanego do funkcji _checkDiagonal
 class LR(Enum):
@@ -29,8 +30,9 @@ class Board:
 
     def setValueAtCoords(self, coords, value):
         row, column = coords
+        if row < 0 or row >= ROWS or column < 0 or column >= COLUMNS:
+            raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
         self._board[row][column] = value
-        # TODO - wyjątek, gdy podamy złe współrzędne
 
     def updatePawnCount(self, color, count):
         if color == WHITE:
@@ -38,8 +40,7 @@ class Board:
         elif color == BLACK:
             self._blackPawnsLeft += count
         else:
-            pass
-            # TODO - wyjątek gdy podamy zły kolor
+            raise incorrectColorValueException('Only black / white colored pawns are accepted')
 
     def updateKingsCount(self, color, count):
         if color == WHITE:
@@ -47,8 +48,7 @@ class Board:
         elif color == BLACK:
             self._blackKings += count
         else:
-            pass
-            # TODO - wyjątek gdy podamy zły kolor
+            raise incorrectColorValueException('Only black / white colored pawns are accepted')
 
     def setUpBoard(self):
         for row in range(ROWS):
@@ -68,13 +68,15 @@ class Board:
 
     # metoda potrzebna do przeprowadzenia testów - ustawia pionki na planszy w przekazany sposób
     def setUpCustomBoard(self, board):
+        if len(board) != ROWS or len(board[0]) != COLUMNS:
+            raise incorrectBoardSize('Custom board size have to be exactly ROWS x COLUMNS')
+
         self._board = [[]]
         for row in range(ROWS):
             # tworzę plansze 8 wierszy
             self._board.append([])
             for column in range(COLUMNS):
                 self._board[row].append(board[row][column])
-                print(self._board[row][column])
 
     def _drawBoard(self, window):
         # rysowanie "stołu" wraz z planszą
@@ -115,6 +117,8 @@ class Board:
                     pawn.draw(window)
 
     def getPawnFromCoords(self, row, column):
+        if row < 0 or row >= ROWS or column < 0 or column >= COLUMNS:
+            raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
         return self._board[row][column]
 
     def getPawnsLeft(self, color):
@@ -123,16 +127,16 @@ class Board:
         elif color == BLACK:
             return self._blackPawnsLeft
         else:
-            pass
-            # TODO - Wyjątek gdy podamy zły kolor
+            raise incorrectColorValueException('Only black / white colored pawns are accepted')
 
     def movePawn(self, pawn, coords):
         row, column = coords
+        if row < 0 or row >= ROWS or column < 0 or column >= COLUMNS:
+            raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
         # Obsługa wirtualnej planszy - zamiana miejscami obiektu pionka z zerem, znajdującym sie do tej pory w
         # miejscu, na które ruszamy piona
-        self._board[pawn.getRow()][pawn.getColumn()], self._board[row][column] = self._board[row][column], \
-                                                                                 self._board[pawn.getRow()][
-                                                                                     pawn.getColumn()]
+        self._board[pawn.getRow()][pawn.getColumn()], self._board[row][column] = \
+            self._board[row][column], self._board[pawn.getRow()][pawn.getColumn()]
         pawn.move(row, column)
 
         # Obsługa zamiany pionka w damkę, gdy dotrzemy do końca planszy.

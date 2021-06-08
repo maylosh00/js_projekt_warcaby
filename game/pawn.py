@@ -1,20 +1,24 @@
 import pygame
 from .constant_values import BLACK, WHITE, SQUARE_SIZE, WIN_WIDTH, WIN_HEIGHT, WIDTH, HEIGHT, PAWN_SQUARE_RATIO, \
-    PAWN_OUTLINE, SCALED_CROWN
+    PAWN_OUTLINE, SCALED_CROWN, ROWS, COLUMNS
 from .draw_methods import drawAACircle
+from .exceptions import incorrectCoordinatesException, incorrectColorValueException
+
 
 class Pawn:
     def __init__(self, row, column, color):
-        #TODO wyjątek, gdy podamy zły row, column
+        if row < 0 or row >= ROWS or column < 0 or column >= COLUMNS:
+            raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
         self._row = row
         self._column = column
 
         if color == WHITE:
             self._invColor = BLACK
-        else:
+        elif color == BLACK:
             self._invColor = WHITE
+        else:
+            raise incorrectColorValueException('Only black / white colored pawns are accepted')
         self._color = color
-        #TODO wyjątek, gdy wpiszemy zły kolor
 
         self.x = 0
         self.y = 0
@@ -24,7 +28,7 @@ class Pawn:
         self.x = (WIN_WIDTH - WIDTH) / 2 + SQUARE_SIZE / 2 + self._column * SQUARE_SIZE
         self.y = (WIN_HEIGHT - HEIGHT) / 2 + SQUARE_SIZE / 2 + self._row * SQUARE_SIZE
 
-    # ettery
+    # gettery
     def getRow(self):
         return self._row
     def getColumn(self):
@@ -43,13 +47,15 @@ class Pawn:
         # pionek
         drawAACircle(window, self._color, (self.x, self.y), radius)
 
+    # metoda do nadpisania
     def draw(self, window):
         pass
 
     def move(self, newRow, newColumn):
+        if newRow < 0 or newRow >= ROWS or newColumn < 0 or newColumn >= COLUMNS:
+            raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
         self._row = newRow
         self._column = newColumn
-        #todo - wyjatek, gdy podamy zle wartosci row, column
         self.calculateXY()
 
 

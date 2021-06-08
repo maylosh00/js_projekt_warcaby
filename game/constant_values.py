@@ -10,11 +10,11 @@ ROWS, COLUMNS = 8, 8
 SQUARE_SIZE = int(HEIGHT/ROWS)
 PAWN_SQUARE_RATIO = 0.55
 PAWN_OUTLINE = 2
-PAWN_ROWS_PER_COLOR = 3
+PAWN_ROWS_PER_COLOR = 2
 
 # flagi modyfikujące grę
-ALLOW_SKIPPING_BACKWARDS = True
-ALLOW_KING_LONGJUMP = True
+ALLOW_SKIPPING_BACKWARDS = False
+ALLOW_KING_LONGJUMP = False
 
 # stałe zmieniające parametry gry
 FPS = 75
@@ -34,9 +34,8 @@ SMALLFONT = pygame.font.Font('assets/Lato/Lato-Bold.ttf', 18)
 BIGFONT = pygame.font.Font('assets/Lato/Lato-Black.ttf', 36)
 
 # png
-# TODO - posprzątaj tu
 CROWN = pygame.image.load('assets/crown.png')
-CROWN_SCALE_RATIO = SQUARE_SIZE * PAWN_SQUARE_RATIO * 0.7 / CROWN.get_width()
-SCALED_CROWN = pygame.transform.scale(CROWN, (int(CROWN.get_width() * CROWN_SCALE_RATIO), int(CROWN.get_height() * CROWN_SCALE_RATIO)))
+crownScaleRatio = SQUARE_SIZE * PAWN_SQUARE_RATIO * 0.7 / CROWN.get_width()
+SCALED_CROWN = pygame.transform.scale(CROWN, (int(CROWN.get_width() * crownScaleRatio), int(CROWN.get_height() * crownScaleRatio)))
 
 

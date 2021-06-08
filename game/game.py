@@ -1,8 +1,9 @@
 import pygame
 from .board import Board
 from .constant_values import WHITE, BLACK, BOARD_MEDIUM, SQUARE_SIZE, PAWN_SQUARE_RATIO, WIN_WIDTH, WIDTH, HEIGHT, \
-    WIN_HEIGHT, BIGFONT, BORDER_SIZE, BOARD_BLACK, SMALLFONT
+    WIN_HEIGHT, BIGFONT, BORDER_SIZE, BOARD_BLACK, SMALLFONT, ROWS, COLUMNS
 from .draw_methods import drawAACircle
+from .exceptions import incorrectColorValueException, incorrectCoordinatesException
 from .pawn import KingPawn
 
 
@@ -20,6 +21,8 @@ class Game:
         self._winner = None
 
     def setUpCustomGame(self, board, color):
+        if color != WHITE or color != BLACK:
+            raise incorrectColorValueException('Only black / white colored pawns are accepted')
         self._initValues()
         self.board.setUpCustomBoard(board)
         self.turn = color
@@ -85,6 +88,9 @@ class Game:
     # metoda odpalana przy kliknięciu na pole na planszy
     def select(self, row, column):
 
+        if row < 0 or row >= ROWS or column < 0 or column >= COLUMNS:
+            raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
+
         # jeżeli coś było już wybrane, kliknięcie pola zadecyduje o tym, czy można przestawić tam piona
         if self.selected:
             # jeżeli wybieramy drugi raz to samo pole, odznaczamy je
@@ -120,6 +126,8 @@ class Game:
     def drawValidMoves(self, moves):
         for coords in moves:
             row, column = coords
+            if row < 0 or row >= ROWS or column < 0 or column >= COLUMNS:
+                raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
             drawAACircle(self.window,BOARD_MEDIUM,(column * SQUARE_SIZE + SQUARE_SIZE // 2 + (WIN_WIDTH - WIDTH)/2,
                                                         row * SQUARE_SIZE + SQUARE_SIZE // 2 + (WIN_HEIGHT - HEIGHT)/2),
                                SQUARE_SIZE * PAWN_SQUARE_RATIO / 2 * PAWN_SQUARE_RATIO)
