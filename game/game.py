@@ -1,10 +1,11 @@
 import pygame
 from .board import Board
 from .constant_values import WHITE, BLACK, BOARD_MEDIUM, SQUARE_SIZE, PAWN_SQUARE_RATIO, WIN_WIDTH, WIDTH, HEIGHT, \
-    WIN_HEIGHT, BIGFONT, BORDER_SIZE, BOARD_BLACK, SMALLFONT, ROWS, COLUMNS
+    WIN_HEIGHT, BORDER_SIZE, BOARD_BLACK, ROWS, COLUMNS
 from .draw_methods import drawAACircle
 from .exceptions import incorrectColorValueException, incorrectCoordinatesException
 from .pawn import KingPawn
+from .assets_constants import LATO_BLACK_36, LATO_BOLD_18
 
 
 class Game:
@@ -27,7 +28,7 @@ class Game:
         :param color: representation of color in tuple[int, int, int] format
         :return:
         """
-        if color != WHITE or color != BLACK:
+        if color != WHITE and color != BLACK:
             raise incorrectColorValueException('Only black / white colored pawns are accepted')
         self._initValues()
         self.board.setUpCustomBoard(board)
@@ -137,6 +138,8 @@ class Game:
                 self.validMoves = {}
                 self.selected = None
                 self.select(row, column)
+            else:
+                return True
         # zbieram to co się znajduje na klikniętym polu, sprawdzam czy to pionek odpowiedniego koloru i jakie ma
         # możliwe ruchy
         pawn = self.board.getPawnFromCoords(row, column)
@@ -177,11 +180,11 @@ class Game:
         Draws text information about which color's turn is it now above the board
         """
         if self.turn == WHITE:
-            text = BIGFONT.render("Tura BIAŁYCH", True, WHITE)
+            text = LATO_BLACK_36.render("Tura BIAŁYCH", True, WHITE)
             self.window.blit(text, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - text.get_width()/2,
                                     (WIN_HEIGHT - HEIGHT - BORDER_SIZE) / 2 - ((WIN_HEIGHT - HEIGHT - BORDER_SIZE) / 2) / 2 - text.get_height()/2))
         else:
-            text = BIGFONT.render("Tura CZARNYCH", True, BLACK)
+            text = LATO_BLACK_36.render("Tura CZARNYCH", True, BLACK)
             self.window.blit(text, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - text.get_width()/2,
                                     (WIN_HEIGHT - HEIGHT - BORDER_SIZE) / 2 - ((WIN_HEIGHT - HEIGHT - BORDER_SIZE) / 2) / 2 - text.get_height()/2))
 
@@ -195,14 +198,14 @@ class Game:
             (WIN_WIDTH - WIDTH) / 2 - BORDER_SIZE, (WIN_HEIGHT - HEIGHT) / 2 - BORDER_SIZE, WIDTH + BORDER_SIZE * 2,
             HEIGHT + BORDER_SIZE * 2))
         if color == WHITE:
-            text = BIGFONT.render("Wygrały BIAŁE!", True, WHITE)
+            text = LATO_BLACK_36.render("Wygrały BIAŁE!", True, WHITE)
         else:
-            text = BIGFONT.render("Wygrały CZARNE!", True, WHITE)
+            text = LATO_BLACK_36.render("Wygrały CZARNE!", True, WHITE)
         self.window.blit(text, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - text.get_width()/2,
                                     WIN_HEIGHT/2 - text.get_height()/2 - HEIGHT/4))
 
-        longtext1 = SMALLFONT.render("Aby rozpocząć nową grę - wciśnij ENTER", True, WHITE)
-        longtext2 = SMALLFONT.render("Aby wyjść - wciśnij Q", True, WHITE)
+        longtext1 = LATO_BOLD_18.render("Aby rozpocząć nową grę - wciśnij ENTER", True, WHITE)
+        longtext2 = LATO_BOLD_18.render("Aby wyjść - wciśnij Q", True, WHITE)
 
         self.window.blit(longtext1, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - longtext1.get_width()/2,
                                     WIN_HEIGHT/2 - text.get_height()/2 - HEIGHT/4 + text.get_height()*1.5))

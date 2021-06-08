@@ -1,4 +1,6 @@
 import pygame
+
+from .assets_constants import LATO_BOLD_18
 from .constant_values import *
 from .pawn import JustPawn, KingPawn, Pawn
 from enum import Enum
@@ -105,6 +107,8 @@ class Board:
             self._board.append([])
             for column in range(COLUMNS):
                 self._board[row].append(board[row][column])
+        self._whitePawnsLeft = self._calculatePawns(WHITE)
+        self._blackPawnsLeft = self._calculatePawns(BLACK)
 
     def _drawBoard(self, window):
         """
@@ -129,13 +133,13 @@ class Board:
         letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
         for i in range(ROWS):
             # liczby
-            text = SMALLFONT.render(str(ROWS - i), True, BOARD_DARK)
+            text = LATO_BOLD_18.render(str(ROWS - i), True, BOARD_DARK)
             x = (WIN_WIDTH - WIDTH) / 2
             y = (WIN_HEIGHT - HEIGHT) / 2
             window.blit(text, (x - BORDER_SIZE * 0.5 - text.get_width() / 2,
                                y + SQUARE_SIZE * i + SQUARE_SIZE * 0.5 - text.get_height() / 2))
             # litery
-            text = SMALLFONT.render(letters[i], True, BOARD_DARK)
+            text = LATO_BOLD_18.render(letters[i], True, BOARD_DARK)
             y += HEIGHT
             window.blit(text, (
             x + i * SQUARE_SIZE + SQUARE_SIZE / 2 - text.get_width() / 2, y + BORDER_SIZE / 2 - text.get_height() / 2))

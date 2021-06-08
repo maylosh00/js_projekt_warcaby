@@ -1,6 +1,8 @@
 import pygame
+
+from .assets_constants import SCALED_CROWN
 from .constant_values import BLACK, WHITE, SQUARE_SIZE, WIN_WIDTH, WIN_HEIGHT, WIDTH, HEIGHT, PAWN_SQUARE_RATIO, \
-    PAWN_OUTLINE, SCALED_CROWN, ROWS, COLUMNS
+    PAWN_OUTLINE, ROWS, COLUMNS
 from .draw_methods import drawAACircle
 from .exceptions import incorrectCoordinatesException, incorrectColorValueException
 

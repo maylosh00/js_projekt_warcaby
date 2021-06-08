@@ -1,14 +1,14 @@
 import pygame
 from game.constant_values import WIN_WIDTH, WIN_HEIGHT, WIDTH, HEIGHT, SQUARE_SIZE, ROWS, COLUMNS, FPS, WHITE, BLACK
 from game.game import Game
-from game.pawn import Pawn
-
-window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-pygame.display.set_caption('Warcaby')
-
 
 # funkcja znajdująca położenie myszki na planszy w postaci (row, column)
 def getRowColumnCoordsFromMousePos(mousePos):
+    """
+    Calculates coordinates in (row, column) format from given mouse position
+    :param mousePos: tuple[int,int]
+    :return: tuple[int,int]
+    """
     x, y = mousePos
     # nie sprawdzam czy kursor znajduje się na planszy, będą o tym świadczyły koordynaty np. w postaci
     # (-1, 2) lub (8, 1)
@@ -17,17 +17,10 @@ def getRowColumnCoordsFromMousePos(mousePos):
     return int(row), int(column)
 
 
-testBoard = [[0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, Pawn(2, 3, BLACK), 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0],
-             [0, Pawn(4, 1, BLACK), 0, 0, 0, 0, 0, 0],
-             [Pawn(5, 0, WHITE), 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0]]
-
-
 def main():
+    window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+    pygame.display.set_caption('Warcaby')
+
     # zmienne potrzebne do poprawnego przebiegu gry (flaga run, clock z biblioteki pygame, obiekt klasy Game)
     run = True
     clock = pygame.time.Clock()
@@ -35,13 +28,9 @@ def main():
 
     while run:
         # używam metody tick do aktualizowania zegara i czekania odpowiednią ilość czasu, aby gra chodziła w podanej
-        # ilości klatek na sekundę. Pygame posiada precyzyjniejsze metody do tego typu obliczeń, jednak przy warcabach
-        # ta metoda w zupełności wystarczy
+        # ilości klatek na sekundę.
         clock.tick(FPS)
         # nasłuchuje zdarzeń (wyłączenia gry lub kliknięcia myszą)
-        #
-        # if game.returnWinner() is not None:
-        #     pass
         events = pygame.event.get()
         for event in events:
             # wyłączam grę gry zdarzeniem okarze się quit (wyłączenie przez naciśniecie x)
