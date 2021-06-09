@@ -9,16 +9,7 @@ from game.pawn import JustPawn, KingPawn
 class EnglishCheckersTest(unittest.TestCase):
     window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
-    testBoard = [[0, 0, 0, 0, 0, 0, 0, 0],
-                 [0, 0, 0, 0, 0, 0, 0, 0],
-                 [0, 0, 0, JustPawn(2, 3, BLACK), 0, 0, 0, 0],
-                 [0, 0, 0, 0, 0, 0, 0, 0],
-                 [0, JustPawn(4, 1, BLACK), 0, 0, 0, 0, 0, 0],
-                 [JustPawn(5, 0, WHITE), 0, 0, 0, 0, 0, 0, 0],
-                 [0, 0, 0, 0, 0, 0, 0, 0],
-                 [0, 0, 0, 0, 0, 0, 0, 0]]
-
-    def test_shouldReturnTrue_forTwoMovesPerPlay(self):
+    def test_shouldReturnTrue_forTwoMovesPerPlayer(self):
         # given
         game = Game(self.window)
         moves = []
