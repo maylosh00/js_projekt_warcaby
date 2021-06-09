@@ -130,7 +130,7 @@ class Board:
                     SQUARE_SIZE, SQUARE_SIZE))
 
         # dodaje oznaczenia
-        letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+        letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P']
         for i in range(ROWS):
             # liczby
             text = LATO_BOLD_18.render(str(ROWS - i), True, BOARD_DARK)
