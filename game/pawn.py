@@ -22,9 +22,9 @@ class Pawn:
 
         self.x = 0
         self.y = 0
-        self.calculateXY()
+        self._calculateXY()
 
-    def calculateXY(self):
+    def _calculateXY(self):
         """
         Sets x and y value to coordinates (in pixels) at which the center of a pawn is located
         """
@@ -84,7 +84,7 @@ class Pawn:
             raise incorrectCoordinatesException('Row/column value has to be in the range [0,ROWS/COLUMNS)')
         self._row = newRow
         self._column = newColumn
-        self.calculateXY()
+        self._calculateXY()
 
 
 # zwykły pionek

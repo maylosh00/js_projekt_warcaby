@@ -17,8 +17,8 @@ class Game:
     def _initValues(self):
         self.selected = None
         self.board = Board()
-        self.turn = WHITE
-        self.validMoves = {}
+        self._turn = WHITE
+        self._validMoves = {}
         self._winner = None
 
     def setUpCustomGame(self, board, color):
@@ -32,7 +32,7 @@ class Game:
             raise incorrectColorValueException('Only black / white colored pawns are accepted')
         self._initValues()
         self.board.setUpCustomBoard(board)
-        self.turn = color
+        self._turn = color
 
     def reset(self):
         self._initValues()
@@ -47,10 +47,10 @@ class Game:
             self._drawWinnerMessage(self._winner)
         else:
             self.board.drawGame(self.window)
-            self.drawValidMoves(self.validMoves)
-            self.drawTurnInfo()
+            self._drawValidMoves(self._validMoves)
+            self._drawTurnInfo()
             if self.selected:
-                self.drawSelectedPawn(self.selected)
+                self._drawSelectedPawn(self.selected)
 
         pygame.display.update()
 
@@ -64,12 +64,12 @@ class Game:
         """
         pawn = self.board.getPawnFromCoords(row, column)
         # sprawdzam czy pole na które chce przestawić jest puste i czy znajduje się w słowniku możliwych ruchów
-        if self.selected and pawn == 0 and (row, column) in self.validMoves:
+        if self.selected and pawn == 0 and (row, column) in self._validMoves:
             self.board.movePawn(self.selected, (row, column))
 
-            skippedSquares = self.validMoves[(row, column)]
+            skippedSquares = self._validMoves[(row, column)]
             if skippedSquares:
-                self.remove(skippedSquares)
+                self._remove(skippedSquares)
 
             self.changeTurn()
         else:
@@ -77,7 +77,7 @@ class Game:
         return True
 
     # metoda odpowiedzialna za usunięcie pionków
-    def remove(self, pawns):
+    def _remove(self, pawns):
         """
         Method removing pawns from a board
         :param pawns: list of Pawn objects
@@ -104,12 +104,12 @@ class Game:
         Changes turn from one color to another, clears selected pawn and it's valid moves
         """
         # zeruje słownik możliwych ruchów, aby nie przestał się wyświetlać na ekranie
-        self.validMoves = {}
+        self._validMoves = {}
         self.selected = None
-        if self.turn == WHITE:
-            self.turn = BLACK
+        if self._turn == WHITE:
+            self._turn = BLACK
         else:
-            self.turn = WHITE
+            self._turn = WHITE
 
     # metoda odpalana przy kliknięciu na pole na planszy
     def select(self, row, column):
@@ -129,13 +129,13 @@ class Game:
             # jeżeli wybieramy drugi raz to samo pole, odznaczamy je
             if self.selected.getRow() == row and self.selected.getColumn() == column:
                 self.selected = None
-                self.validMoves = {}
+                self._validMoves = {}
                 return False
 
             result = self._move(row, column)
             if not result:
                 # zeruje słownik możliwych ruchów, aby nie przestał się wyświetlać na ekranie
-                self.validMoves = {}
+                self._validMoves = {}
                 self.selected = None
                 self.select(row, column)
             else:
@@ -143,14 +143,14 @@ class Game:
         # zbieram to co się znajduje na klikniętym polu, sprawdzam czy to pionek odpowiedniego koloru i jakie ma
         # możliwe ruchy
         pawn = self.board.getPawnFromCoords(row, column)
-        if pawn != 0 and pawn.getColor() == self.turn:
+        if pawn != 0 and pawn.getColor() == self._turn:
             self.selected = pawn
-            self.validMoves = self.board.getValidMoves(pawn)
+            self._validMoves = self.board.getValidMoves(pawn)
             return True
 
         return False
 
-    def drawSelectedPawn(self, pawn):
+    def _drawSelectedPawn(self, pawn):
         """
         Highlights given pawn on a board
         :param pawn: Pawn object
@@ -162,7 +162,7 @@ class Game:
         SQUARE_SIZE))
         pawn.draw(self.window)
 
-    def drawValidMoves(self, moves):
+    def _drawValidMoves(self, moves):
         """
         Highlights valid moves as little circles on a board
         :param moves: list of tuple[int,int] objects
@@ -175,11 +175,11 @@ class Game:
                                                         row * SQUARE_SIZE + SQUARE_SIZE // 2 + (WIN_HEIGHT - HEIGHT)/2),
                                SQUARE_SIZE * PAWN_SQUARE_RATIO / 2 * PAWN_SQUARE_RATIO)
 
-    def drawTurnInfo(self):
+    def _drawTurnInfo(self):
         """
         Draws text information about which color's turn is it now above the board
         """
-        if self.turn == WHITE:
+        if self._turn == WHITE:
             text = LATO_BLACK_36.render("Tura BIAŁYCH", True, WHITE)
             self.window.blit(text, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - text.get_width()/2,
                                     (WIN_HEIGHT - HEIGHT - BORDER_SIZE) / 2 - ((WIN_HEIGHT - HEIGHT - BORDER_SIZE) / 2) / 2 - text.get_height()/2))
