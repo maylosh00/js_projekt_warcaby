@@ -9,12 +9,13 @@ WIN_WIDTH, WIN_HEIGHT = 700, 800
 WIDTH, HEIGHT = 600, 600
 BORDER_SIZE = 25
 
-# plansze dotyczące pól i pionków
-ROWS, COLUMNS = 8, 8
-SQUARE_SIZE = int(HEIGHT/ROWS)
-PAWN_SQUARE_RATIO = 0.55
+# stałe dotyczące pól i pionków !!!
+ROWS = COLUMNS = 8
 PAWN_OUTLINE = 2
 PAWN_ROWS_PER_COLOR = 3
+
+SQUARE_SIZE = int(HEIGHT/ROWS)
+PAWN_SQUARE_RATIO = 0.55
 
 # stałe zmieniające parametry gry
 FPS = 75
