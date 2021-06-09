@@ -1,7 +1,7 @@
 import pygame
 import unittest
 
-from game.constant_values import WIN_WIDTH, WIN_HEIGHT, BLACK, WHITE, ROWS
+from game.constant_values import WIN_WIDTH, WIN_HEIGHT, BLACK, WHITE
 from game.game import Game
 from game.pawn import JustPawn, KingPawn
 
@@ -79,7 +79,7 @@ class EnglishCheckersTest(unittest.TestCase):
 
     def test_shouldReturnTrue_whenSkippedManyPawnsSuccessfully(self):
         game = Game(self.window)
-        testBoard = [[JustPawn(0, 0, BLACK), 0, 0, 0, 0, 0, 0, 0],
+        testBoard = [[0, JustPawn(0, 1, BLACK), 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, JustPawn(2, 5, BLACK), 0, 0],
                      [0, 0, 0, 0, 0, 0, 0, 0],
@@ -96,7 +96,7 @@ class EnglishCheckersTest(unittest.TestCase):
 
     def test_shouldRemovePawnsFromBoard_afterMultiSkipping(self):
         game = Game(self.window)
-        testBoard = [[JustPawn(0, 0, BLACK), 0, 0, 0, 0, 0, 0, 0],
+        testBoard = [[0, JustPawn(0, 1, BLACK), 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, JustPawn(2, 5, BLACK), 0, 0],
                      [0, 0, 0, 0, 0, 0, 0, 0],
@@ -145,7 +145,7 @@ class EnglishCheckersTest(unittest.TestCase):
         game.setUpCustomGame(testBoard, WHITE)
 
         game.select(4, 3)
-        skip = game.select(6, 1) # wykonuje bicie "do tyłu", niewykonalne normalnym pionkiem
+        skip = game.select(6, 1)  # wykonuje bicie "do tyłu", niewykonalne normalnym pionkiem
 
         self.assertTrue(skip)
 
@@ -162,7 +162,7 @@ class EnglishCheckersTest(unittest.TestCase):
         game.setUpCustomGame(testBoard, WHITE)
 
         game.select(4, 3)
-        skip = game.select(6, 1) # wykonuje bicie "do tyłu", niewykonalne normalnym pionkiem
+        skip = game.select(6, 1)  # wykonuje bicie "do tyłu", niewykonalne normalnym pionkiem
 
         self.assertEqual(game.board.getPawnFromCoords(5, 2), 0)
 
@@ -179,9 +179,9 @@ class EnglishCheckersTest(unittest.TestCase):
         game.setUpCustomGame(testBoard, WHITE)
 
         game.select(6, 1)
-        game.select(5, 2) # ruszam biały pion do czarnego
+        game.select(5, 2)  # ruszam biały pion do czarnego
         game.select(4, 3)
-        game.select(6, 1) # zbijam czarnym pionem białego i kończę grę
+        game.select(6, 1)  # zbijam czarnym pionem białego i kończę grę
 
         self.assertIsNotNone(game.returnWinner())
 
@@ -198,15 +198,13 @@ class EnglishCheckersTest(unittest.TestCase):
         game.setUpCustomGame(testBoard, WHITE)
 
         game.select(6, 1)
-        game.select(5, 2) # ruszam biały pion do czarnego
+        game.select(5, 2)  # ruszam biały pion do czarnego
         game.select(4, 3)
-        game.select(6, 1) # zbijam czarnym pionem białego i kończę grę
-        game.reset() # resetuje grę, normalnie dzieje się to przez kliknięcie przycisku enter
+        game.select(6, 1)  # zbijam czarnym pionem białego i kończę grę
+        game.reset()  # resetuje grę, normalnie dzieje się to przez kliknięcie przycisku enter
 
-        self.assertIsNone(game.returnWinner()) # sprawdzam flagę _winner w klasie Game (to ona decyduje o tym,
+        self.assertIsNone(game.returnWinner())  # sprawdzam flagę _winner w klasie Game (to ona decyduje o tym,
         # czy gra się dalej toczy, czy pokazuje ekran końcowy)
 
 if __name__ == '__main__':
     unittest.main()
-
-# python -m unittest test.test_english_checkers

@@ -5,7 +5,7 @@ from .constant_values import WHITE, BLACK, BOARD_MEDIUM, SQUARE_SIZE, PAWN_SQUAR
 from .draw_methods import drawAACircle
 from .exceptions import incorrectColorValueException, incorrectCoordinatesException
 from .pawn import KingPawn
-from .assets_constants import LATO_BLACK_36, LATO_BOLD_18
+from .assets_constants import LATO_BLACK_36, LATO_REGULAR_18
 
 
 class Game:
@@ -204,8 +204,8 @@ class Game:
         self.window.blit(text, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - text.get_width()/2,
                                     WIN_HEIGHT/2 - text.get_height()/2 - HEIGHT/4))
 
-        longtext1 = LATO_BOLD_18.render("Aby rozpocząć nową grę - wciśnij ENTER", True, WHITE)
-        longtext2 = LATO_BOLD_18.render("Aby wyjść - wciśnij Q", True, WHITE)
+        longtext1 = LATO_REGULAR_18.render("Aby rozpocząć nową grę - wciśnij ENTER", True, WHITE)
+        longtext2 = LATO_REGULAR_18.render("Aby wyjść - wciśnij Q", True, WHITE)
 
         self.window.blit(longtext1, ((WIN_WIDTH - WIDTH)/2 + WIDTH/2 - longtext1.get_width()/2,
                                     WIN_HEIGHT/2 - text.get_height()/2 - HEIGHT/4 + text.get_height()*1.5))

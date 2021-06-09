@@ -1,6 +1,7 @@
 import pygame
-from game.constant_values import WIN_WIDTH, WIN_HEIGHT, WIDTH, HEIGHT, SQUARE_SIZE, ROWS, COLUMNS, FPS, WHITE, BLACK
+from game.constant_values import WIN_WIDTH, WIN_HEIGHT, WIDTH, HEIGHT, SQUARE_SIZE, ROWS, COLUMNS, FPS
 from game.game import Game
+
 
 # funkcja znajdująca położenie myszki na planszy w postaci (row, column)
 def getRowColumnCoordsFromMousePos(mousePos):

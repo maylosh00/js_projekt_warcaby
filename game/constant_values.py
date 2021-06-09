@@ -1,5 +1,9 @@
 import pygame
 
+# flagi modyfikujące grę !!!
+ALLOW_SKIPPING_BACKWARDS = False
+ALLOW_KING_LONGJUMP = False
+
 # stałe do rysowania planszy
 WIN_WIDTH, WIN_HEIGHT = 700, 800
 WIDTH, HEIGHT = 600, 600
@@ -11,10 +15,6 @@ SQUARE_SIZE = int(HEIGHT/ROWS)
 PAWN_SQUARE_RATIO = 0.55
 PAWN_OUTLINE = 2
 PAWN_ROWS_PER_COLOR = 3
-
-# flagi modyfikujące grę
-ALLOW_SKIPPING_BACKWARDS = False
-ALLOW_KING_LONGJUMP = False
 
 # stałe zmieniające parametry gry
 FPS = 75
